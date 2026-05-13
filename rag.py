@@ -28,19 +28,18 @@ def load_and_index_pdf(pdf_path: str):
     if os.path.exists("./chroma_db"):
         shutil.rmtree("./chroma_db")
 
-    loader = PyPDFLoader(pdf_path)
-    documents = loader.load()
+    # loader = PyPDFLoader(pdf_path)
+    # documents = loader.load()
 
-    splitter = RecursiveCharacterTextSplitter(
-        chunk_size=1000,
-        chunk_overlap=200
-    )
-    chunks = splitter.split_documents(documents)
+    # splitter = RecursiveCharacterTextSplitter(
+    #     chunk_size=1000,
+    #     chunk_overlap=200
+    # )
+    # chunks = splitter.split_documents(documents)
     embeddings = HuggingFaceEmbeddings(model_name="all-MiniLM-L6-v2")
     vectorstore = Chroma.from_documents(
         documents=chunks,
-        embedding=embeddings,
-        persist_directory="./chroma_db"
+        embedding=embeddings
     )
     return vectorstore, len(chunks)
 
