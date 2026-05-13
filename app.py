@@ -26,7 +26,7 @@ with st.sidebar:
 
     if uploaded_file:
         temp_file_name = f"{uuid.uuid4()}.pdf"
-        with open("temp_file_name.pdf", "wb") as f:
+        with open(temp_file_name, "wb") as f:
             f.write(uploaded_file.getbuffer())
 
         if st.button("Index PDF", type="primary"):
