@@ -28,6 +28,9 @@ with st.sidebar:
             f.write(uploaded_file.getbuffer())
 
         if st.button("Index PDF", type="primary"):
+            st.session_state.qa_chain = None
+            import gc
+            gc.collect()
             with st.spinner("Reading and indexing PDF..."):
                 vectorstore, n_chunks = load_and_index_pdf("temp.pdf")
                 st.session_state.qa_chain = get_qa_chain(vectorstore)
