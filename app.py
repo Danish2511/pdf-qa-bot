@@ -2,6 +2,7 @@ import streamlit as st
 from rag import load_and_index_pdf, get_qa_chain, ask_question
 from langchain_openai import OpenAIEmbeddings
 from langchain_community.vectorstores import Chroma
+import uuid
 
 st.set_page_config(
     page_title="PDF Q&A Bot",
@@ -24,7 +25,8 @@ with st.sidebar:
     uploaded_file = st.file_uploader("Choose a PDF", type="pdf")
 
     if uploaded_file:
-        with open("temp.pdf", "wb") as f:
+        temp_file_name = f"{uuid.uuid4()}.pdf"
+        with open("temp_file_name.pdf", "wb") as f:
             f.write(uploaded_file.getbuffer())
 
         if st.button("Index PDF", type="primary"):
@@ -32,7 +34,7 @@ with st.sidebar:
             import gc
             gc.collect()
             with st.spinner("Reading and indexing PDF..."):
-                vectorstore, n_chunks = load_and_index_pdf("temp.pdf")
+                vectorstore, n_chunks = load_and_index_pdf(temp_file_name)
                 st.session_state.qa_chain = get_qa_chain(vectorstore)
                 st.success(f"Indexed {n_chunks} chunks!")
 
@@ -42,9 +44,9 @@ with st.sidebar:
     if st.button("Load existing index"):
         embeddings = OpenAIEmbeddings()
         vectorstore = Chroma.from_documents(
-        documents=chunks,
-        embedding=embeddings,
-        collection_name=collection_name
+            documents=chunks,
+            embedding=embeddings,
+            collection_name=collection_name
         )
         st.session_state.qa_chain = get_qa_chain(vectorstore)
         st.success("Index loaded!")
