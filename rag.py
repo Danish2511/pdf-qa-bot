@@ -1,3 +1,6 @@
+import shutil
+import os
+
 from langchain_huggingface import HuggingFaceEmbeddings
 from langchain_community.document_loaders import PyPDFLoader
 from langchain_text_splitters import RecursiveCharacterTextSplitter
@@ -22,6 +25,17 @@ def load_and_index_pdf(pdf_path: str):
     chunks = splitter.split_documents(documents)
 
     # Still using OpenAI for embeddings — switch to free below if needed
+    if os.path.exists("./chroma_db"):
+        shutil.rmtree("./chroma_db")
+
+    loader = PyPDFLoader(pdf_path)
+    documents = loader.load()
+
+    splitter = RecursiveCharacterTextSplitter(
+        chunk_size=1000,
+        chunk_overlap=200
+    )
+    chunks = splitter.split_documents(documents)
     embeddings = HuggingFaceEmbeddings(model_name="all-MiniLM-L6-v2")
     vectorstore = Chroma.from_documents(
         documents=chunks,
