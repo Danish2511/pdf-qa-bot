@@ -41,9 +41,10 @@ with st.sidebar:
     # Load existing index if already built
     if st.button("Load existing index"):
         embeddings = OpenAIEmbeddings()
-        vectorstore = Chroma(
-            persist_directory="./chroma_db",
-            embedding_function=embeddings
+        vectorstore = Chroma.from_documents(
+        documents=chunks,
+        embedding=embeddings,
+        collection_name=collection_name
         )
         st.session_state.qa_chain = get_qa_chain(vectorstore)
         st.success("Index loaded!")
